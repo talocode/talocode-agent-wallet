@@ -151,6 +151,7 @@ export default defineConfig(async ({ command, isPreview }) => {
     ? (await import("@netlify/vite-plugin-tanstack-start")).default()
     : null;
   return {
+  base: process.env.APP_BASE_PATH || "/",
   server: {
     host: "0.0.0.0",
     port: 8080,

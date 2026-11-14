@@ -28,7 +28,7 @@ function Docs() {
   return (
     <div className="min-h-screen">
       <header className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
-        <Link to="/" className="flex items-center gap-2"><img src="/brand/talocode-logo.png" alt="" className="h-8 w-8" /><span className="text-sm">Docs</span></Link>
+        <Link to="/" className="flex items-center gap-2"><img src={`${import.meta.env.BASE_URL}brand/talocode-logo.png`} alt="" className="h-8 w-8" /><span className="text-sm">Docs</span></Link>
         <Link to="/app" className="text-sm text-primary">Dashboard</Link>
       </header>
       <main className="mx-auto max-w-3xl space-y-8 px-4 py-6">

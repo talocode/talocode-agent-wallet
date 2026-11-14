@@ -38,7 +38,7 @@ function Login() {
     <main className="mx-auto grid min-h-screen max-w-md place-items-center px-4 py-10">
       <div className="w-full space-y-5">
         <Link to="/" className="flex items-center gap-2">
-          <img src="/brand/talocode-logo.png" alt="" className="h-8 w-8" />
+          <img src={`${import.meta.env.BASE_URL}brand/talocode-logo.png`} alt="" className="h-8 w-8" />
           <span className="text-sm">Talocode Agent Wallet</span>
         </Link>
         <h1 className="font-serif text-4xl">Sign in</h1>

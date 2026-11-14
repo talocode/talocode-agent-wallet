@@ -8,7 +8,7 @@ function Home() {
     <div className="min-h-screen">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
         <div className="flex items-center gap-2">
-          <img src="/brand/talocode-logo.png" alt="" className="h-9 w-9" />
+          <img src={`${import.meta.env.BASE_URL}brand/talocode-logo.png`} alt="" className="h-9 w-9" />
           <span className="text-sm font-medium">Talocode</span>
         </div>
         <div className="flex gap-2">

@@ -25,7 +25,7 @@ export function Shell({ children }: { children: ReactNode }) {
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/brand/talocode-logo.png" alt="" className="h-8 w-8" />
+            <img src={`${import.meta.env.BASE_URL}brand/talocode-logo.png`} alt="" className="h-8 w-8" />
             <span className="text-sm font-medium">Agent Wallet</span>
           </Link>
           <UserButton />
