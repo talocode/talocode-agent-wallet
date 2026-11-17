@@ -27,6 +27,19 @@ test("sends the bearer key and surfaces API errors", async () => {
   });
 });
 
-test("refuses an empty API key", () => {
-  assert.throws(() => new Talocode({ apiKey: " ", baseUrl: "https://agent.example" }));
+test("refuses an empty API key on an authed call, and health stays public", async () => {
+  const client = new Talocode({ baseUrl: "https://agent.example" });
+  await assert.rejects(() => client.agents.list(), /apiKey is required/);
+  const calls: string[] = [];
+  const open = new Talocode({
+    baseUrl: "https://agent.example/agent-wallet",
+    fetchImpl: async (input, init) => {
+      calls.push(String(input));
+      assert.equal(new Headers(init?.headers).get("authorization"), null);
+      return new Response(JSON.stringify({ ok: true }), { status: 200 });
+    },
+  });
+  const health = await open.health();
+  assert.equal(health.ok, true);
+  assert.equal(calls[0], "https://agent.example/agent-wallet/api/v1/health");
 });

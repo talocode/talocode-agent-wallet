@@ -1,9 +1,44 @@
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SignedIn, SignedOut } from "@/lib/auth/gates";
+import { publicHealth } from "@/lib/wallet/public-api";
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({
+  loader: () => ({ health: publicHealth() }),
+  component: Home,
+});
+
+const surfaces = [
+  ["npm", "@talocode/agent-wallet", "Packaged SDK, CLI, and MCP. MIT. The client never holds a key."],
+  ["CLI", "talocode-wallet", "health, agents, wallets, policies, payments request. A request is not a signature."],
+  ["MCP", "talocode-wallet mcp", "Same tools over stdio. There is no sign_transaction tool."],
+  ["API", "GET /api/v1/health", "Public liveness and capabilities. Payments still need a bearer key."],
+];
+
+function HostedApi({ expected }: { expected: string }) {
+  const [body, setBody] = useState(expected);
+  const [source, setSource] = useState("Rendered from the same function the route returns.");
+  useEffect(() => {
+    const prefix = (import.meta.env.BASE_URL || "/").replace(/\/?$/, "/");
+    fetch(`${prefix}api/v1/health`)
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error("Health route failed.");
+        setBody(JSON.stringify(payload, null, 2));
+        setSource("Fetched from GET /api/v1/health.");
+      })
+      .catch(() => setSource("The HTTP health route did not answer. The payload below is still the route function."));
+  }, [expected]);
+  return (
+    <div className="space-y-2">
+      <p className="text-sm text-muted">{source}</p>
+      <pre className="overflow-x-auto rounded-lg border border-border bg-bg p-4 text-sm text-fg">{body}</pre>
+    </div>
+  );
+}
 
 function Home() {
+  const { health } = Route.useLoaderData();
   return (
     <div className="min-h-screen">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
@@ -31,6 +66,20 @@ function Home() {
             <Link to="/docs" className="inline-flex h-11 items-center rounded-md border border-border px-4 text-sm">Read the quickstart</Link>
           </div>
         </section>
+        <section className="grid gap-3 sm:grid-cols-2">
+          {surfaces.map(([title, command, body]) => (
+            <article key={title} className="rounded-lg border border-border bg-surface p-4">
+              <p className="text-sm uppercase tracking-wide text-primary">{title}</p>
+              <h2 className="mt-1 font-serif text-2xl">{command}</h2>
+              <p className="mt-2 text-sm text-muted">{body}</p>
+            </article>
+          ))}
+        </section>
+        <section className="space-y-3">
+          <h2 className="font-serif text-3xl">Hosted API, live</h2>
+          <p className="text-sm text-muted">This is the public health route from this app. It does not call Devnet and it does not sign.</p>
+          <HostedApi expected={JSON.stringify(health, null, 2)} />
+        </section>
         <section className="grid gap-3 sm:grid-cols-3">
           {[
             ["Agents", "Name the workers that can request money. Pause them when you want the requests to stop."],
@@ -49,7 +98,7 @@ function Home() {
             <li>Solana Devnet only. Mainnet, Base, and Ethereum are not connected.</li>
             <li>SOL transfers, and SPL transfers of Circle Devnet USDC. Those tokens have no monetary value.</li>
             <li>Every payment, including one inside the policy, needs an owner signature on this device.</li>
-            <li>REST API, a TypeScript client, and an MCP server that can request a payment and cannot sign it.</li>
+            <li>One package: npm client, CLI, MCP server, and the hosted REST API. None of them can sign.</li>
           </ul>
         </section>
       </main>

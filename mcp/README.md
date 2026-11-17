@@ -24,4 +24,4 @@ This server exposes the same REST API to an MCP client. A tool can request a pay
 
 Use a read key for lookup tools. Requesting a payment needs the transact permission. The payment stays `awaiting_approval` until the owner signs it in the dashboard.
 
-Works with any MCP client that speaks stdio and Content-Length framing, including Claude Desktop style configs. The tool names are `create_agent`, `list_agents`, `get_agent`, `list_wallets`, `get_wallet_balance`, `get_spending_policy`, `request_payment`, `get_transaction`, and `list_transactions`.
+Works with any MCP client that speaks stdio and Content-Length framing, including Claude Desktop style configs. The same server starts with `talocode-wallet mcp` from `@talocode/agent-wallet`. The tool names are `api_health`, `api_capabilities`, `create_agent`, `list_agents`, `get_agent`, `list_wallets`, `get_wallet_balance`, `get_spending_policy`, `request_payment`, `get_transaction`, and `list_transactions`.

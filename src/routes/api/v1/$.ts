@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { publicCapabilities, publicHealth } from "@/lib/wallet/public-api";
 import { clusterStatus } from "@/lib/wallet/solana.server";
 import {
   assignWallet,
@@ -159,7 +160,11 @@ async function handle(request: Request) {
     return json({ error: { message: "Request body is too large." } }, 400);
   }
   const url = new URL(request.url);
-  const route = url.pathname.split("/").filter(Boolean).slice(2);
+  const parts = url.pathname.split("/").filter(Boolean);
+  const v1 = parts.lastIndexOf("v1");
+  const route = parts[v1 - 1] === "api" ? parts.slice(v1 + 1) : parts.slice(2);
+  if (request.method === "GET" && route.length === 1 && route[0] === "health") return json(publicHealth());
+  if (request.method === "GET" && route[0] === "capabilities" && route.length === 1) return json(publicCapabilities());
   const header = request.headers.get("authorization") ?? "";
   const token = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
   if (!token) return json({ error: { message: "Send Authorization: Bearer tk_..." } }, 401);

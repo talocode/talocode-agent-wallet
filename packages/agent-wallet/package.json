@@ -1,0 +1,27 @@
+{
+  "name": "@talocode/agent-wallet",
+  "version": "0.2.0",
+  "description": "SDK, CLI, and MCP for Talocode Agent Wallet. Solana Devnet. The client can request a payment. It cannot sign.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "talocode-wallet": "./bin/talocode-wallet.mjs"
+  },
+  "exports": {
+    ".": "./src/client.mjs",
+    "./cli": "./src/cli.mjs",
+    "./mcp": "./src/mcp.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

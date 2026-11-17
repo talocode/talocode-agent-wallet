@@ -22,6 +22,8 @@ Talocode Agent Wallet is one web app.
 
 The network value is fixed to `solana-devnet`. The policy rejects anything else. Adding mainnet later means a separate signer review, real fee handling, and an explicit user opt-in. It is not a config flag today.
 
-## SDK and MCP
+## SDK, CLI, MCP, and API
 
-Both are thin clients of the REST API. They are in this repository so the contract stays next to the server. They are not published to npm in this version.
+The publishable package is `packages/agent-wallet` (`@talocode/agent-wallet`). The CLI is `talocode-wallet`. The MCP server is that package, also started by `mcp/server.mjs`. The in-app TypeScript client is `src/sdk/client.ts` and speaks the same routes.
+
+`GET /api/v1/health` and `GET /api/v1/capabilities` are public. They do not call Devnet. Every other route still needs a bearer key. None of these clients can sign. The package can be packed locally. A registry publish is a separate step and is not claimed here.

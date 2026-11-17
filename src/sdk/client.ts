@@ -1,3 +1,8 @@
+export function joinUrl(baseUrl: string, path: string): URL {
+  const root = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+  return new URL(path.replace(/^\//, ""), root);
+}
+
 export class TalocodeError extends Error {
   status: number;
   constructor(message: string, status: number) {
@@ -8,7 +13,7 @@ export class TalocodeError extends Error {
 }
 
 export type TalocodeOptions = {
-  apiKey: string;
+  apiKey?: string;
   baseUrl: string;
   fetchImpl?: typeof fetch;
 };
@@ -18,18 +23,18 @@ type Json = Record<string, unknown>;
 export class Talocode {
   options: TalocodeOptions;
   constructor(options: TalocodeOptions) {
-    if (!options.apiKey?.trim()) throw new Error("apiKey is required.");
     if (!options.baseUrl?.trim()) throw new Error("baseUrl is required.");
-    this.options = options;
+    this.options = { ...options, apiKey: options.apiKey ?? "" };
   }
 
-  private async request<T>(method: string, path: string, body?: Json, headers?: Record<string, string>): Promise<T> {
+  private async request<T>(method: string, path: string, body?: Json, headers?: Record<string, string>, auth = true): Promise<T> {
+    if (auth && !(this.options.apiKey ?? "").trim()) throw new Error("apiKey is required.");
     const fetchImpl = this.options.fetchImpl ?? fetch;
-    const response = await fetchImpl(new URL(path, this.options.baseUrl), {
+    const response = await fetchImpl(joinUrl(this.options.baseUrl, path), {
       method,
       headers: {
-        authorization: `Bearer ${this.options.apiKey}`,
         accept: "application/json",
+        ...(auth ? { authorization: `Bearer ${this.options.apiKey ?? ""}` } : {}),
         ...(body ? { "content-type": "application/json" } : {}),
         ...headers,
       },
@@ -38,6 +43,14 @@ export class Talocode {
     const payload = (await response.json()) as { error?: { message?: string } };
     if (!response.ok) throw new TalocodeError(payload.error?.message || `Request failed (${response.status}).`, response.status);
     return payload as T;
+  }
+
+  health() {
+    return this.request<Json>("GET", "/api/v1/health", undefined, undefined, false);
+  }
+
+  capabilities() {
+    return this.request<Json>("GET", "/api/v1/capabilities", undefined, undefined, false);
   }
 
   agents = {

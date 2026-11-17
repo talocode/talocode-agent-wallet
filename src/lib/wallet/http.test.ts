@@ -3,6 +3,21 @@ import test from "node:test";
 
 const base = process.env.WALLET_TEST_BASE ?? "http://127.0.0.1:8080";
 
+test("health and capabilities are public", async () => {
+  const health = await fetch(`${base}/api/v1/health`);
+  assert.equal(health.status, 200);
+  const healthBody = await health.json();
+  assert.equal(healthBody.ok, true);
+  assert.equal(healthBody.package, "@talocode/agent-wallet");
+  assert.equal(healthBody.signing, "owner-device-only");
+
+  const catalog = await fetch(`${base}/api/v1/capabilities`);
+  assert.equal(catalog.status, 200);
+  const body = await catalog.json();
+  assert.ok(body.surfaces.includes("mcp"));
+  assert.ok(body.cannot.includes("sign a transaction"));
+});
+
 test("the API rejects a missing key and a bad key", async () => {
   const missing = await fetch(`${base}/api/v1/agents`);
   assert.equal(missing.status, 401);

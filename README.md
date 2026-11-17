@@ -36,9 +36,21 @@ curl -H "Authorization: Bearer $TALOCODE_API_KEY" "$TALOCODE_BASE_URL/api/v1/age
 
 Create a key in API keys. It is shown once. `read` can list. `transact` can request a payment. Neither can sign.
 
+## Package
+
+`packages/agent-wallet` is `@talocode/agent-wallet` 0.2.0. It ships the SDK, the `talocode-wallet` CLI, and the MCP server. MIT. Pack it from that folder. It is not automatically on the public npm registry.
+
+```bash
+cd packages/agent-wallet
+npm pack
+node bin/talocode-wallet.mjs --help
+```
+
+`health` and `capabilities` call the public routes. A payment command only creates `awaiting_approval`.
+
 ## SDK
 
-See [src/sdk/README.md](src/sdk/README.md).
+See [src/sdk/README.md](src/sdk/README.md) and [packages/agent-wallet/README.md](packages/agent-wallet/README.md).
 
 ```ts
 import { Talocode } from "./src/sdk/client.ts";
@@ -47,12 +59,13 @@ const client = new Talocode({
   apiKey: process.env.TALOCODE_API_KEY ?? "",
   baseUrl: process.env.TALOCODE_BASE_URL ?? "http://127.0.0.1:8080",
 });
+const health = await client.health();
 const agents = await client.agents.list();
 ```
 
 ## MCP
 
-See [mcp/README.md](mcp/README.md). The server can request a payment. It cannot sign, export a key, or submit a signature.
+See [mcp/README.md](mcp/README.md). `node mcp/server.mjs` and `talocode-wallet mcp` are the same server. It can request a payment. It cannot sign, export a key, or submit a signature.
 
 ## Environment
 

@@ -1,6 +1,6 @@
 # @talocode/agent-wallet
 
-TypeScript client for Talocode Agent Wallet. It calls the REST API. It does not sign transactions and it never sees a passphrase.
+TypeScript client for Talocode Agent Wallet. The copy you import inside this app is `src/sdk/client.ts`. The publishable package is `packages/agent-wallet`. Both call the REST API. Neither signs transactions or sees a passphrase.
 
 ```ts
 import { Talocode } from "./client";
@@ -10,6 +10,7 @@ const talocode = new Talocode({
   baseUrl: process.env.TALOCODE_BASE_URL ?? "https://your-deployed-app.example",
 });
 
+const health = await talocode.health();
 const { agent } = await talocode.agents.create({
   name: "Research Agent",
   description: "Reads papers and pays for sources on Devnet.",
